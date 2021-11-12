@@ -17,17 +17,17 @@ for i_t = 0:dt:t
     dcm_n_b = get313DCM(eu_angles(:,i));
     
     % Update position vector
-    n_pos_val = inv(dcm_n_b) * b_pos;
+    n_pos_val = dcm_n_b' * b_pos;
     n_pos = [n_pos n_pos_val];
     
     % Update velocity vector
     b_vel_val = cross(w_b_n, b_pos);
-    n_vel_val = inv(dcm_n_b) * b_vel_val;
+    n_vel_val = dcm_n_b' * b_vel_val;
     n_vel = [n_vel n_vel_val];
     
     % Get new euler rates (From body to inertial)
     dcm_rate_n_b= get313DiffEq(eu_angles(:,i));
-    dcm_rate_b_n = inv(dcm_rate_n_b);
+    dcm_rate_b_n = dcm_rate_n_b';
     eul_rates = dcm_rate_b_n * w_b_n; % from body to inertial rates
     
     % Integrate eul_rates and update eu_angles and interator (Euler Method)

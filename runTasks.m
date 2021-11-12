@@ -14,11 +14,18 @@ PARAMS.eu_lmo_init = [20;30;60];
 
 %% Task 1: Orbit Simulation
 
-[n_pos, n_vel] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 450, 1);
+[n_pos, n_vel] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 2000, 1);
 
 % Plotting
 plot3(n_pos(1,:), n_pos(2,:), n_pos(3,:), 'o')
 xlabel('n_1 (km)');
 ylabel('n_2 (km)');
 zlabel('n_3 (km)');
+xl = xlim();
+yl = ylim();
+zl = zlim();
+hold on;
+line([0,2000], [0,0], [0,0], 'LineWidth', 3, 'Color', 'k');
+line([0,0], [0,2000], [0,0], 'LineWidth', 3, 'Color', 'k');
+line([0,0], [0,0], [0,2000], 'LineWidth', 3, 'Color', 'k');
 %plot3(n_vel(1,:), n_vel(2,:), n_vel(3,:), 'o')
