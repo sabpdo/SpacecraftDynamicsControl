@@ -32,7 +32,7 @@ for i_t = 0:dt:t
     
     % Integrate eul_rates and update eu_angles and interator (Euler Method)
     new_angles_rad = eu_angles(:,i)*(pi/180) + eul_rates * dt;
-    eu_angles = [eu_angles new_angles_rad *(180/pi)];
+    eu_angles = [eu_angles new_angles_rad*(180/pi)];
     i = i + 1;
         
 end
