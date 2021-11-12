@@ -12,7 +12,7 @@ eu_angles = [];
 eu_angles = [eu_angles initial_angles];
 
 i = 1;
-for i_t = 1:dt:t
+for i_t = 0:dt:t
     % Setup DCM
     dcm_n_b = get313DCM(eu_angles(:,i));
     
@@ -28,7 +28,7 @@ for i_t = 1:dt:t
     % Get new euler rates (From body to inertial)
     dcm_rate_n_b= get313DiffEq(eu_angles(:,i));
     dcm_rate_b_n = inv(dcm_rate_n_b);
-    eul_rates = dcm_rate_b_n * w_b_n;
+    eul_rates = dcm_rate_b_n * w_b_n; % from body to inertial rates
     
     % Integrate eul_rates and update eu_angles and interator (Euler Method)
     new_angles_rad = eu_angles(:,i)*(pi/180) + eul_rates * dt;
