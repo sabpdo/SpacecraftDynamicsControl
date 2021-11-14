@@ -26,7 +26,6 @@ for i_t = 0:dt:t
     
     % Get new euler rates (From body to inertial)
     if (gmo == 1)
-        dcm_rate_n_b= get313DiffEq(eu_angles(:,i));
         w_n_b = inv(dcm_n_b) * w_b_n;
         new_angles_rad = eu_angles(:,i)*(pi/180) + w_n_b * dt;
     else
