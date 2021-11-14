@@ -17,15 +17,10 @@ for i_t = 0:dt:t
     n_pos = [n_pos n_pos_val];
     
     % Update velocity vector
-    if (gmo == 1)
-        w_n_b = (dcm_n_b) * w_b_n;
-        n_vel_val = cross(w_n_b, b_pos);
-        n_vel = [n_vel n_vel_val];
-    else
-        b_vel_val = cross(w_b_n, b_pos);
-        n_vel_val = inv(dcm_n_b) * b_vel_val;
-        n_vel = [n_vel n_vel_val];
-    end
+    b_vel_val = cross(w_b_n, b_pos);
+    n_vel_val = inv(dcm_n_b) * b_vel_val;
+    n_vel = [n_vel n_vel_val];
+
     
     % Get new euler rates (From body to inertial)
     if (gmo == 1)
