@@ -16,7 +16,7 @@ PARAMS.eu_gmo_init = [0; 0; 250];
 
 %% Task 1: Orbit Simulation
 
-[n_pos_lmo, n_vel_lmo] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 2000, 1);
+[n_pos_lmo, n_vel_lmo] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 450, 1, 0);
 
 % Plotting
 figure;
@@ -34,18 +34,13 @@ line([0,0], [0,0], [0,2000], 'LineWidth', 3, 'Color', 'k');
 title('Orbit Simulations LMO and GMO')
 
 %%
-[n_pos_gmo, n_vel_gmo] = simulate_orbit(PARAMS.r_gmo, PARAMS.eu_gmo_init, PARAMS.w_b_n_gmo, 1150, 1);
+[n_pos_gmo, n_vel_gmo] = simulate_orbit(PARAMS.r_gmo, PARAMS.eu_gmo_init, PARAMS.w_b_n_gmo, 1150, 1, 1);
 
 % Plotting
 hold on;
 plot3(n_pos_gmo(1,:), n_pos_gmo(2,:), n_pos_gmo(3,:), 'o')
 
-figure;
-plot(n_pos_gmo(1,:));
-hold on;
-plot(n_pos_gmo(2,:));
-hold on;
-plot(n_pos_gmo(3,:));
+
 
 
 
