@@ -1,4 +1,4 @@
-function [n_pos,n_vel] = simulate_orbit(radius, initial_angles, w_b_n, t, dt, gmo)
+function [n_pos,n_vel, dcm_n_b_t] = simulate_orbit(radius, initial_angles, w_b_n, t, dt, gmo)
 
 % Initialize variables
 b_pos = [radius; 0; 0];
@@ -6,11 +6,13 @@ n_pos = [];
 n_vel = [];
 eu_angles = [];
 eu_angles = [eu_angles initial_angles];
+dcm_n_b_t = []; % struct to hold all of HN(t)
 
 i = 1;
 for i_t = 0:dt:t
     % Setup DCM
     dcm_n_b = get313DCM(eu_angles(:,i));
+    dcm_n_b_t = [dcm_n_b_t dcm_n_b];
     
     % Update position vector
     n_pos_val = inv(dcm_n_b) * b_pos;
@@ -24,6 +26,7 @@ for i_t = 0:dt:t
     
     % Get new euler rates (From body to inertial)
     if (gmo == 1)
+        dcm_rate_n_b= get313DiffEq(eu_angles(:,i));
         w_n_b = inv(dcm_n_b) * w_b_n;
         new_angles_rad = eu_angles(:,i)*(pi/180) + w_n_b * dt;
     else
