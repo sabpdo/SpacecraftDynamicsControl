@@ -44,6 +44,7 @@ class acsSizer():
         # Find surface area of the largest face of orbit
         A = self.sc.dim
         A_s = A[0]*A[1] # get surface area
+        #print(A_s)
         if ( A[0]*A[2] > A_s):
             A_s = A[0]*A[1]
         if ( A[1]*A[2] > A_s):
@@ -171,11 +172,11 @@ class acsSizer():
         # Assume worst case distance from thruster to CG (shortest)
         # Requires larger thrust to impart the required torque on the S/C
         worst_moment_arm = min(moment_arms)
-        print(moment_arms)
+        #print(moment_arms)
         # Thrust required to dump momentum per pulse
         F = H / (worst_moment_arm * t)
         # Required prop mas sfor this prop system 
-        total_pulses = (self.sc.life * 365.25) / sat_rate # total thr pulses required over lifetime
+        total_pulses = (3 * self.sc.life * 365.25) / sat_rate # total thr pulses required over lifetime
         m_prop = (F * total_pulses * t) / (Isp * g) # [kg]
         # total prop system mass assuming 85% of the prop system mass is propellant (SMAD, p 660)
         p_mass = m_prop / 0.85 # mass in kg
@@ -188,6 +189,7 @@ class acsSizer():
         t = 2 * math.pi * math.sqrt(self.orbit.a**3 / self.mu) # [sec]
         # Calculate solar radiation torques
         Ts = self.calc_solar_torque()
+        #print(Ts)
         ang_step = math.pi/50 # [rad]
         start = 0
         stop = 2 * math.pi
@@ -242,7 +244,7 @@ class acsSizer():
             # Calculate Gravity Torques
             Tg = self.calc_gravity_torque(np.linalg.norm(r))
             TG.append(Tg)
-            #print(Tg)
+            #print(Ts)
             TS.append(Ts)
             # Sum all disturance torque
             T_total = Ts + Ta + Tm + Tg # [Nm]
@@ -285,7 +287,7 @@ class acsSizer():
 
 if __name__ == "__main__":
     # Run test case
-    veh_dim = np.array([1.7, 1, 1.7])
+    veh_dim = np.array([1.7, 1, 1.7]) # length width depth
     veh_CG  = np.array([0.2, 0, 0])
     veh_mass = 200
     veh_life = 4
