@@ -16,8 +16,8 @@ PARAMS.eu_gmo_init = [0; 0; 250];
 
 %% Task 1: Orbit Simulation
 
-[n_pos_lmo, n_vel_lmo, ~] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 450, 1, 0);
-disp('rLMO and vLMO at 1150s: ');
+[n_pos_lmo, n_vel_lmo, ~] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 1150, 1, 0);
+disp('rLMO and vLMO at 450s: ');
 disp(n_pos_lmo(:,end))
 disp(n_vel_lmo(:,end))
 % Plotting
@@ -55,6 +55,12 @@ plot3(n_pos_gmo(1,:), n_pos_gmo(2,:), n_pos_gmo(3,:), 'o')
 HN_300s = dcm_n_b_t(:,end-2:end);
 disp('LMO HN Matrix at 300 s: ');
 disp(HN_300s)
+
+%% Task 3: Sun Pointing Reference Frame Orientation
+
+dcm_rs_n = getRsN();
+
+%% Task 4: Nadir-Pointing Reference Frame
 
 
 
