@@ -60,6 +60,8 @@ disp(HN_300s)
 
 dcm_rs_n = getRsN();
 
+% w_rs_n is 0, Rs frame moves constant with respect to the inertial frame
+
 %% Task 4: Nadir-Pointing Reference Frame
 
 
