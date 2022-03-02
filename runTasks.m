@@ -77,3 +77,7 @@ disp(dcm_rs_n)
 
 n_w_rc_n = get_n_w_rc_n(PARAMS, 330, 0.01);
 
+
+%% Task 6: Att Error Evaluation
+
+
