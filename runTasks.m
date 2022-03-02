@@ -66,7 +66,10 @@ disp(dcm_rs_n)
 
 %% Task 4: Nadir-Pointing Reference Frame
 
-dcm_rn_n = getRnN(330
+% Return [RnN] and n_w_rn_n at t = 330s
+
+[dcm_rn_n, n_w_rn_n] = getRnN(PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 330, 1);
+
 
 
 

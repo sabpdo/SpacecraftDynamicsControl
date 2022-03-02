@@ -1,4 +1,4 @@
-function [dcm_rn_n,  = getRnN(t, initial_angles, w_b_n)
+function [dcm_rn_n, n_w_rn_n]  = getRnN(initial_angles, w_b_n, t, dt)
 % Get Nadir-Pointing Reference Frame to Inertial Frame DCM
 % Gives RnN at given time t
 % H = {ir, itheta, ih}
@@ -10,27 +10,18 @@ function [dcm_rn_n,  = getRnN(t, initial_angles, w_b_n)
 % RnH = {0, 180, 0} euler angle 313 sequence
 RnH = [-1 0 0; 0 1 0; 0 0 -1];
 
-dt = 1;
-i = 1;
 
+% Propogate orbit and get the dcm at time t
+[~, ~, dcm_n_b_t] = simulate_orbit(0, initial_angles, w_b_n, t, dt, 0);
+dcm_n_b_t = dcm_n_b_t(:,end-2:end)'; % Just need to get the last one
+dcm_b_n_t = dcm_n_b_t';
 
-% Propogate orbit and get euler angles at time t
-dcm_rate_n_b = get313DiffEq(initial_angles);
-dcm_rate_b_n = inv(dcm_rate_n_b);
-eul_rates = dcm_rate_b_n * w_b_n; % from body to inertial rates
-% Integrate eul_rates and update eu_angles via Euler's Method
-eul_angles = initial_angles * (pi/180) + eul_rates * t;
-
-
-% Get DCM from inertial to orbit frame
-% [NH]
-dcm_n_b = get313DCM(eu_angles);
-% Transpose DCM [HN]
-dcm_b_n = dcm_n_b';
 
 % Compute [RnN] = [RnH] * [HN]
-dcm_rn_n = RnH * dcm_b_n;
+dcm_rn_n = RnH * dcm_b_n_t;
 
+% Return angular velocity vector n_w_rn_n
+n_w_rn_n = dcm_n_b_t * w_b_n;
 
 
 end
