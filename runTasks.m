@@ -71,5 +71,9 @@ disp(dcm_rs_n)
 [dcm_rn_n, n_w_rn_n] = getRnN(PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 330, 1);
 
 
+%% Task 5: GMO-Pointing Reference Frame
 
+[RcN] = getRcN(PARAMS, 330, 1);
+
+n_w_rc_n = get_n_w_rc_n(PARAMS, 330, 0.01);
 
