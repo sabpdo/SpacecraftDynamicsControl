@@ -1,6 +1,8 @@
-function [n_pos,n_vel, dcm_n_b_t] = simulate_orbit(radius, initial_angles, w_b_n, t, dt, gmo)
+function [n_pos,n_vel, dcm_n_b_t] = simulate_orbit(radius, initial_angles, w_b_n, t, dt)
 
 % Initialize variables
+
+% Position vector on a circular orbit: r = radius* i_r
 b_pos = [radius; 0; 0];
 n_pos = [];
 n_vel = [];
@@ -24,17 +26,15 @@ for i_t = 0:dt:t
     n_vel = [n_vel n_vel_val];
 
     
-    % Get new euler rates (From body to inertial)
-    if (gmo == 1)
-        w_n_b = inv(dcm_n_b) * w_b_n;
-        new_angles_rad = eu_angles(:,i)*(pi/180) + w_n_b * dt;
-    else
-        dcm_rate_n_b= get313DiffEq(eu_angles(:,i));
-        dcm_rate_b_n = inv(dcm_rate_n_b);
-        eul_rates = dcm_rate_b_n * w_b_n; % from body to inertial rates
-        % Integrate eul_rates and update eu_angles and interator (Euler Method)
-        new_angles_rad = eu_angles(:,i)*(pi/180) + eul_rates * dt;
-    end
+    
+    % Get new euler rates (From body to inertial
+    dcm_rate_n_b = get313DiffEq(eu_angles(:,i));
+    dcm_rate_b_n = dcm_rate_n_b';
+    eul_rates = dcm_rate_b_n * w_b_n; % From body to inertial
+    % Theta = Theta_initial + t * theta_dot
+    new_angles_rad = eu_angles(:,i) * (pi/180) + eul_rates * dt;
+    
+
     eu_angles = [eu_angles new_angles_rad*(180/pi)];
     i = i + 1;
         

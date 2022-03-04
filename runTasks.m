@@ -2,8 +2,11 @@
 % Runs and validates tasks
 
 % Initial Orbit Frame Orientation Angles
+% Hill/Body Frame: {i_r, i_theta, i_h}
+% Circular orbit: w_b_n = theta_dot * i_h
 PARAMS.w_b_n_lmo = [0; 0; 0.000884797]; % rad/s
-PARAMS.w_b_n_gmo = [0; 0; 0.0000709003]; % rad/s
+PARAMS.w_b_n_gmo = [0; 0;  0.0000709003]; % rad/s
+% Position vector on a circular orbit: r = radius* i_r
 PARAMS.r_lmo = 3396.19 + 400; % km
 PARAMS.r_gmo = 20424.2; % km
 % (3-1-3) Euler Angles 
@@ -16,7 +19,7 @@ PARAMS.eu_gmo_init = [0; 0; 250];
 
 %% Task 1: Orbit Simulation
 
-[n_pos_lmo, n_vel_lmo, ~] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 1150, 1, 0);
+[n_pos_lmo, n_vel_lmo, ~] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 1150, 1);
 disp('rLMO and vLMO at 450s: ');
 disp(n_pos_lmo(:,end))
 disp(n_vel_lmo(:,end))
@@ -36,7 +39,7 @@ line([0,0], [0,0], [0,2000], 'LineWidth', 3, 'Color', 'k');
 title('Orbit Simulations LMO and GMO')
 
 % Simulate GMO
-[n_pos_gmo, n_vel_gmo, ~] = simulate_orbit(PARAMS.r_gmo, PARAMS.eu_gmo_init, PARAMS.w_b_n_gmo, 1150, 1, 1);
+[n_pos_gmo, n_vel_gmo, ~] = simulate_orbit(PARAMS.r_gmo, PARAMS.eu_gmo_init, PARAMS.w_b_n_gmo, 500000, 5000);
 disp('rGMO and vGMO at 1150s: ');
 disp(n_pos_gmo(:,end))
 disp(n_vel_gmo(:,end))
@@ -50,7 +53,7 @@ plot3(n_pos_gmo(1,:), n_pos_gmo(2,:), n_pos_gmo(3,:), 'o')
 %% Task 2: Orbit Frame Orientation
 
 % Find LMO DCM [HN] at 300s
-[~, ~, dcm_n_b_t] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 300, 1, 0);
+[~, ~, dcm_n_b_t] = simulate_orbit(PARAMS.r_lmo, PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, 300, 1);
 
 HN_300s = dcm_n_b_t(:,end-2:end);
 disp('LMO HN Matrix at 300 s: ');

@@ -12,7 +12,7 @@ RnH = [-1 0 0; 0 1 0; 0 0 -1];
 
 
 % Propogate orbit and get the dcm at time t
-[~, ~, dcm_n_b_t] = simulate_orbit(0, initial_angles, w_b_n, t, dt, 0);
+[~, ~, dcm_n_b_t] = simulate_orbit(0, initial_angles, w_b_n, t, dt);
 dcm_n_b_t = dcm_n_b_t(:,end-2:end)'; % Just need to get the last one
 dcm_b_n_t = dcm_n_b_t';
 
