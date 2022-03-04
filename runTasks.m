@@ -61,8 +61,8 @@ disp(HN_300s)
 dcm_rs_n = getRsN();
 disp("Sun Pointing Reference Frame Orientation DCM: ")
 disp(dcm_rs_n)
-
-% w_rs_n is 0, Rs frame moves constant with respect to the inertial frame
+n_w_rs_n = [0; 0; 0];
+% n_w_rs_n is 0, Rs frame moves constant with respect to the inertial frame
 
 %% Task 4: Nadir-Pointing Reference Frame
 
@@ -73,11 +73,22 @@ disp(dcm_rs_n)
 
 %% Task 5: GMO-Pointing Reference Frame
 
-[RcN] = getRcN(PARAMS, 330, 1);
+[dcm_rc_n] = getRcN(PARAMS, 330, 1);
 
 n_w_rc_n = get_n_w_rc_n(PARAMS, 330, 0.01);
 
 
 %% Task 6: Att Error Evaluation
 
+% S/C initial conditions at t0
+o_b_n = [0.3; -0.4; 0.5]; % S/C Initial attitude
+b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 
+% Test calcAttError for sun-pointing at t0
+[o_b_rs_n, b_w_b_rs_n] = calcAttErr(o_b_n, b_w_b_n, dcm_rs_n, n_w_rs_n);
+
+% Test calcAttError for nadir-pointing at t0
+[o_b_rn_n, b_w_b_rn_n] = calcAttErr(o_b_n, b_w_b_n, dcm_rn_n, n_w_rn_n);
+
+% Test calcAttError for GMO reference pointing at t0
+[o_b_rc_n, b_w_b_rc_n] = calcAttErr(o_b_n, b_w_b_n, dcm_rc_n, n_w_rc_n);
