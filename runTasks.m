@@ -95,3 +95,12 @@ b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 
 % Test calcAttError for GMO reference pointing at t0
 [o_b_rc_n, b_w_b_rc_n] = calcAttErr(o_b_n, b_w_b_n, dcm_rc_n, n_w_rc_n);
+
+
+%% Task 7: Numerical Attitude Simulator
+
+
+
+
+
+
