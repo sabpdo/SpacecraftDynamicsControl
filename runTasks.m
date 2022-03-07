@@ -103,4 +103,3 @@ b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 
 
 
-
