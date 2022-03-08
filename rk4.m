@@ -1,4 +1,4 @@
-function [t, yout] = rk4(fcn, x0, u_control, dt, tend)
+function [t, yout] = rk4(fcn, x0, u_control, dt, tend, mrp_use)
 % Runge-Kutta 4 Integrator
 % Function should be setup as y_dot = f(x, u, t)
 % Hold control vector u piece-wise constant over the RK4 integration to the
@@ -22,4 +22,13 @@ for i = 1:(length(t)-1)
     % Calculate y(i + dt)
     yout(:, i+1) = yout(:, i) + (k1 + 2*k2 + 2*k3 + k4)*dt/6;
     
+    % Check norm of MRP if flag set
+    if (mrp_use)
+       % If Using MRPs check norm and see if we're approaching singularity
+       norm_o_b_n = norm(yout(1:3, i+1));
+       if (norm_o_b_n > 1)
+           yout(1:3, i+1) = -(yout(1:3,i+1) ./(norm_o_b_n^2));
+           
+       end
+    end
 end

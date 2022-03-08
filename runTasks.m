@@ -102,7 +102,7 @@ b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 % Integrate State vector X forward 500s with u = 0
 % Provide H = [I]*w_b_n at 500s expressed in the B frame
 
-[tout, xout] = rk4(@sc_dynamics, b_w_b_n*pi/180, [0;0;0], 1, 500);
+[tout, xout] = rk4(@sc_dynamics, b_w_b_n*pi/180, [0;0;0], 1, 500, 0);
 b_I = [10 0 0; 0 5 0; 0 0 7.5]; % [kg-m^2]
 
 b_H = b_I * xout(:, end);
@@ -112,11 +112,22 @@ b_H = b_I * xout(:, end);
 T = 1/2* xout(:,end)' * b_I * xout(:,end);
 
 % Provide MRP attitude o_b_n (500s)
+x0 = [o_b_n; b_w_b_n*pi/180];
+[tout, xout] = rk4(@sc_dynamics_full, x0, [0;0;0], 1, 500, 1);
+disp("MRP Attitude at 500s:")
+disp(xout(1:3, end))
+plot(tout, xout)
 
 % Provide angular momentum vector n_H(500s) in inertial frame components
-
+% Get DCM [BN] from the MRP
+BN = mrp2dcm(xout(1:3,end));
+n_H = BN' * b_H;
 % If you apply a fixed control torque b_u = (0.01, -0.01, 0.02) Nm provide
 % the attitude o_b_n (t = 100s)
-
+[tout, xout] = rk4(@sc_dynamics_full, x0, [0.01;-0.01;0.02], 1, 100, 1);
+disp("MRP Attitude with Fixed COntrol Torque at 100s:")
+disp("b_u = [0.01; -0.01; 0.02]")
+disp(xout(1:3,end))
+plot(tout,xout)
 
 
