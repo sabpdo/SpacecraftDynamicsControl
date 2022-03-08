@@ -18,11 +18,11 @@ eu_gmo_init = PARAMS.eu_gmo_init;
 
 
 % Get position of LMO S/C wrt to inertial frame at time t
-[n_pos_lmo, ~, ~] = simulate_orbit(r_lmo, eu_lmo_init, w_b_n_lmo, t, dt, 0);
+[n_pos_lmo, ~, ~] = simulate_orbit(r_lmo, eu_lmo_init, w_b_n_lmo, t, dt);
 
 
 % Get position of GMO S/C wrt to inertial frame at time t
-[n_pos_gmo, ~, ~] = simulate_orbit(r_gmo, eu_gmo_init, w_b_n_gmo, t, dt, 1);
+[n_pos_gmo, ~, ~] = simulate_orbit(r_gmo, eu_gmo_init, w_b_n_gmo, t, dt);
 
 dr = n_pos_gmo(:,end) - n_pos_lmo(:,end);
 r1 = -(dr) / norm(dr);

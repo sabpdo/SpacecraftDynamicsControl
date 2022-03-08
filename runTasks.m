@@ -99,7 +99,24 @@ b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 
 %% Task 7: Numerical Attitude Simulator
 
+% Integrate State vector X forward 500s with u = 0
+% Provide H = [I]*w_b_n at 500s expressed in the B frame
 
+[tout, xout] = rk4(@sc_dynamics, b_w_b_n*pi/180, [0;0;0], 1, 500);
+b_I = [10 0 0; 0 5 0; 0 0 7.5]; % [kg-m^2]
+
+b_H = b_I * xout(:, end);
+
+% Provide Rotational Kinetic Energy T = 1/2 w_b_n' * I * w_b_n at 500
+% seconds
+T = 1/2* xout(:,end)' * b_I * xout(:,end);
+
+% Provide MRP attitude o_b_n (500s)
+
+% Provide angular momentum vector n_H(500s) in inertial frame components
+
+% If you apply a fixed control torque b_u = (0.01, -0.01, 0.02) Nm provide
+% the attitude o_b_n (t = 100s)
 
 
 
