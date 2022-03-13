@@ -135,3 +135,6 @@ plot(tout,xout)
 % Develop a full mission scenario function with mode switching
 % First mode to develop is Sun Pointing
 % S/C should go into sun pointing model immediately
+
+[t, yout, tlm] = run_mission(400, 0.1, 'SUN-POINTING', @sc_dynamics_full);
+
