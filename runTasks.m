@@ -130,4 +130,8 @@ disp("b_u = [0.01; -0.01; 0.02]")
 disp(xout(1:3,end))
 plot(tout,xout)
 
+%% Task 8: Sun Pointing Control
 
+% Develop a full mission scenario function with mode switching
+% First mode to develop is Sun Pointing
+% S/C should go into sun pointing model immediately
