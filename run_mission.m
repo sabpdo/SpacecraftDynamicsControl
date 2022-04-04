@@ -3,7 +3,7 @@ function [t, yout, tlm] = run_mission(tend, dt, mode, fcn)
 
 % Setup initial conditions
 o_b_n = [0.3; -0.4; 0.5]; % S/C Initial attitude
-b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
+b_w_b_n = [1.00; 1.75; -2.20]; % [deg/s] S/C Iniital body angular velocity
 x0 = [o_b_n; b_w_b_n*pi/180];
 
 t = 0:dt:tend;
@@ -57,8 +57,7 @@ for i = 1:(length(t)-1)
     % check norm and see if we're approaching singularity
     norm_o_b_n = norm(yout(1:3, i+1));
     if (norm_o_b_n > 1)
-        yout(1:3, i+1) = -(yout(1:3,i+1) ./(norm_o_b_n^2));
-           
+        yout(1:3, i+1) = -(yout(1:3,i+1) ./(norm_o_b_n^2));          
     end
     
 

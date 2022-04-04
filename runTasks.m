@@ -137,4 +137,16 @@ plot(tout,xout)
 % S/C should go into sun pointing model immediately
 
 [t, yout, tlm] = run_mission(400, 0.1, 'SUN-POINTING', @sc_dynamics_full);
+figure;
+plot(t, tlm.ctrl_err_att(1:3, :))
+title('MRP Attitude Error BR')
+figure;
+plot(t, yout(1:3, :))
+title('MRP Attitude BN')
+figure;
+plot(t, yout(4:6, :))
+title('Angular Rate BN')
 
+figure;
+plot(t, tlm.ctrl_err_rate(1:3, :))
+title('Angular Rate Error')
