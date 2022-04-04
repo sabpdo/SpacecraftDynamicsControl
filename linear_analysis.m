@@ -32,9 +32,11 @@ pole(sys_ol); % 6 poles all at the origin
 T = 120;
 eta = 1;
 P = (2 * b_I)/T;
-P = max(max(P));
-K = max(max(inv(b_I))) * (P / eta)^2;
-
+K = 1/b_I(3,3) * (P(3,3) / eta)^2;
+% Verify this K gain keeps <=1 damping requirement for the other modes
+eta_1 = P(1,1) / sqrt(K * b_I(1,1));
+eta_2 = P(2,2) / sqrt(K * b_I(2,2));
+eta_3 = P(3,3) / sqrt(K * b_I(3,3));
 A_cl = [0 0 0 1/4 0 0; 0 0 0 0 1/4 0; 0 0 0 0 0 1/4; -K*inv(b_I) -P*inv(b_I)]; 
 B_cl = [zeros(3); zeros(3)];
 C_cl = [1 0 0 0 0 0; 0 1 0 0 0 0; 0 0 1 0 0 0; 0 0 0 1 0 0; 0 0 0 0 1 0; 0 0 0 0 0 1];
