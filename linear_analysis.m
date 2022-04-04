@@ -46,6 +46,7 @@ sys_cl = ss(A_cl, B_cl, C_cl, D_cl);
 o_b_n = [0.3; -0.4; 0.5]; % S/C Initial attitude
 b_w_b_n = [1.00; 1.75; -2.20]; % S/C Iniital body angular velocity
 x0 = [o_b_n; b_w_b_n*pi/180];
+% Response to initial conditions
 [y, tout, x] = lsim(sys_cl, zeros(3,4001), 0:0.1:400, x0);
 
 figure;
