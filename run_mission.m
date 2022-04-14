@@ -1,4 +1,4 @@
-function [t, yout, tlm] = run_mission(tend, dt, mode, fcn)
+function [t, yout, tlm] = run_mission(tend, dt, mode, PARAMS, fcn)
 % Simulate a mission using a runge-kutta 4 integrator
 
 % Setup initial conditions
@@ -27,7 +27,17 @@ for i = 1:(length(t)-1)
             dcm_r_n = getRsN(); % From Inertial to Sun-Pointing
             % Get desired angular velocity
             n_w_r_n = [0; 0; 0]; % rad/s
-            
+        case 'NADIR-POINTING'
+            % Get Nadir-Pointing Reference Frame
+            % From Inertial to Reference
+            % Also get Desired Angular Velocity in inertial frame
+            [dcm_r_n, n_w_r_n] = getRnN(PARAMS.eu_lmo_init, PARAMS.w_b_n_lmo, i, dt);
+        case 'GMO-POINTING'
+            % Get GMO-Pointing Reference Frame
+            % From Inertial to Reference
+            % Get Desired Angular Velocity in inertial frame
+            dcm_r_n = getRcN(PARAMS, t, dt);
+            n_w_r_n = get_n_w_rc_n(PARAMS, t, dt);
     end
     % Save setpoint variables to telemetry
     % Convert DCM to MRP to save in telemetry

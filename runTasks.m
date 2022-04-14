@@ -136,17 +136,94 @@ plot(tout,xout)
 % First mode to develop is Sun Pointing
 % S/C should go into sun pointing model immediately
 
-[t, yout, tlm] = run_mission(400, 0.1, 'SUN-POINTING', @sc_dynamics_full);
+[t, yout, tlm] = run_mission(400, 1, 'SUN-POINTING', PARAMS, @sc_dynamics_full);
 figure;
 plot(t, tlm.ctrl_err_att(1:3, :))
 title('MRP Attitude Error BR')
+grid on;
 figure;
 plot(t, yout(1:3, :))
 title('MRP Attitude BN')
+grid on;
 figure;
 plot(t, yout(4:6, :))
 title('Angular Rate BN')
-
+grid on;
 figure;
 plot(t, tlm.ctrl_err_rate(1:3, :))
 title('Angular Rate Error')
+grid on;
+
+%% Task 9: Nadir Pointing Control
+
+[t, yout, tlm] = run_mission(400, 1, 'NADIR-POINTING', PARAMS, @sc_dynamics_full);
+figure;
+plot(t, tlm.ctrl_err_att(1:3, :))
+title('MRP Attitude Error BR')
+grid on;
+figure;
+plot(t, yout(1:3, :))
+title('MRP Attitude BN')
+grid on;
+figure;
+plot(t, yout(4:6, :))
+title('Angular Rate BN')
+grid on;
+figure;
+plot(t, tlm.ctrl_err_rate(1:3, :))
+title('Angular Rate Error')
+grid on;
+
+%% Task 10: GMO Pointing Control
+
+[t, yout, tlm] = run_mission(400, 1, 'GMO-POINTING', PARAMS, @sc_dynamics_full);
+figure;
+plot(t, tlm.ctrl_err_att(1:3, :))
+title('MRP Attitude Error BR')
+grid on;
+figure;
+plot(t, yout(1:3, :))
+title('MRP Attitude BN')
+grid on;
+figure;
+plot(t, yout(4:6, :))
+title('Angular Rate BN')
+grid on;
+figure;
+plot(t, tlm.ctrl_err_rate(1:3, :))
+title('Angular Rate Error')
+grid on;
+
+
+%% Task 11: Mission Scenario Simulation
+
+% Propagate 6500 seconds 
+
+% Sun is always in the n2 direction
+% Control law must detumble satellite and either point the antenna (-b1)
+% towards the GMO mother satellite, its sensor (b1) at Mars (nadir
+% direction or -r direction) or its solar panels (b3) at the sun
+
+% Due to high power demands of the telescope, the S/C needs to point its
+% solar panels at the sun whenever the S/C is on the sunlit side of Mars
+% (positive n2 position coordinate). In other words, when pointing at the
+% sun, the S/C must point its solar panels axis b3 in the n2 direction
+
+% To complete this 3D frame definition, assume that r1 must point in the
+% -n1 direction
+
+% When the S/C is on the shaded side (over the hemisphere with -n2 position
+% coordinates) it must either enter communication or science mode. In
+% science mode, the science platform axis b1 must point at the center of
+% mars, thus in the Nadir direction. To complete the reference frame,
+% assume that r2 must line up with the orbit along-track axis itheta
+
+% The communication mode requires that the LMO and GMO S/C position vectors
+% have an angular difference of less than 35 degrees. In this mode, the
+% nano-satellite communication platform axis (-b1) must point towards the
+% GMO S/C
+
+% SC on sunlit side of mars: Point to Sun (b3 to sun)
+% SC not on sunlit Mars side & GMO Visible: Point Antenna axis -b1 at GMO
+% SC not on sunlt mars side & GMO is not visible: Point sensor axis b1
+% along mars nadir direction
