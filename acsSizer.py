@@ -25,9 +25,9 @@ class orbit_params(NamedTuple):
 class acsSizer():
 
     # Planet properties
-    mu = 3.986e14   # [m^3/s^2], Earth gravity constant
-    r_pol = 6357000 # [m], Polar radius
-    r_equ = 6378000 # [m], Equitorial radius
+    mu = 6.836529e15   # [m^3/s^2], Neptune gravity constant
+    r_pol = 24621997.59 # [m], Polar radius [CHANGE]
+    r_equ = 24621997.59 # [m], Equitorial radius [CHANGE]
     # Constants
     c = 3*10**8  # [m/s] Speed of light 
     Io_s = 1367; # Solar constant W/m^2
@@ -55,28 +55,6 @@ class acsSizer():
         T_solar = F * max(abs(self.sc.CG))
         return T_solar
     
-    def calc_aero_torque(self, alt, V):
-        # alt [m]
-        # V airspeed [m/s]
-        # Aero Constants
-        T = -131.21 + 0.00299*alt # [deg C] Atmospheric Temperature
-        p = 2.488*(((T + 273.1)/216.6)**-11.388) # [KPa] Atmospheric Pressure
-        rho = p / (0.2869*(T + 273.1)) # [kg/m^3]
-        C_D = 2.2 # drag coefficient of cube shaped SC
-
-        # Assume the center of pressure is at the center of the face of one side
-        # of the cube which is facing direclty into the atmosphere = allow for max drag
-        # Here the surface areas of the sides of the S/C are determined
-        # max([x*z y*z x*y])
-        A = self.sc.dim
-        area_1 = A[0] * A[2]
-        area_2 = A[1] * A[2]
-        area_3 = A[0] * A[1]
-        max_area = max(np.array( [area_1, area_2, area_3] ))
-        F = 0.5 * rho * C_D * (max_area**2) * (V**2)
-        T_aero = F * max(abs(self.sc.CG))
-        return T_aero
-
     def calc_gravity_torque(self, r):
         # Get the max moment of inertia
         Imax = max(np.diag(self.sc.I))
@@ -88,8 +66,8 @@ class acsSizer():
         return T_grav
 
     def calc_magnetic_torque(self, lat, r, re):
-        # Earth magnetic field (approx as dipole)
-        B = (1 + math.sin(lat)**2)**(0.5)  * 0.3/((r/re)**3) # [guass]
+        # Neptune magnetic field (approx as dipole)
+        B = (1)**(0.5) * 0.3/((r/re)**3) # [guass]
         B_t = B* (1*(10**-4)) # [tesla], [N/(A*m)]
         # Vehicle residual dipole (worst case)
         D = 1 # [A*m^2]
@@ -121,7 +99,7 @@ class acsSizer():
         rv2 = r * math.sin(nu)
         rv = np.array([rv1, rv2, 0])
         vv = math.sqrt(self.mu/p) * np.array([-math.sin(nu), e + math.cos(nu), 0])
-        print("hello")
+
         # Rotate
         c0 = math.cos(Om)
         s0 = math.sin(Om)
@@ -140,9 +118,12 @@ class acsSizer():
         # sat_rate: the rate of saturation of a momentum wheel
         #   (used to determine how often the momentum wheel needs dumped)
         #   [days/saturation]
-        Isp = 200 # Hydrazine (monoprop) with a conservative specific impulse (200 sec)
-        g = 9.8
+        Isp = 1000 # Hydrazine (monoprop) with a conservative specific impulse (200 sec)
+        g = 11.15
         t = 1 # impulse time
+
+        #Based off guide
+        H = 20*10e-3
 
         # Specify thruster location
         # [x, y, z]
@@ -171,16 +152,15 @@ class acsSizer():
         
         # Assume worst case distance from thruster to CG (shortest)
         # Requires larger thrust to impart the required torque on the S/C
-        worst_moment_arm = min(moment_arms)
+        worst_moment_arm = 32.5 #min(moment_arms)
         #print(moment_arms)
         # Thrust required to dump momentum per pulse
         F = H / (worst_moment_arm * t)
-        # Required prop mas sfor this prop system 
+        # Required prop mass for this prop system 
         total_pulses = (3 * self.sc.life * 365.25) / sat_rate # total thr pulses required over lifetime
         m_prop = (F * total_pulses * t) / (Isp * g) # [kg]
         # total prop system mass assuming 85% of the prop system mass is propellant (SMAD, p 660)
-        p_mass = m_prop / 0.85 # mass in kg
-
+        p_mass = m_prop / 2.8 # mass in kg
         return F, p_mass
 
     def run_sizer(self):
@@ -219,7 +199,7 @@ class acsSizer():
             E = math.acos( (self.orbit.e + math.cos(ang)) / (1 + self.orbit.e * math.cos(ang))) # Eccentric anomly
             time_to_ang = math.sqrt(self.orbit.a**3 / self.mu) * (E - self.orbit.e * math.sin(E)) 
             time.append(time_to_ang)
-            # Post proces orbit elevation (latitude)
+            # Post process orbit elevation (latitude)
             aa = math.sqrt( r[0]**2 + r[1]**2)
             lat = math.atan2( r[2], aa) # [rad]
             LAT.append(lat)
@@ -230,11 +210,6 @@ class acsSizer():
             # Calculate Planet radius assuming: oblate, sphereoid
             alt = np.linalg.norm(r) - r_planet # [m] Subtract planet radius from vehicle position vector mag
             ALT.append(alt)
-
-            # Calculate Aerodynamic torque
-            Ta = self.calc_aero_torque(alt, v_mag)
-            #print(Ta)
-            TA.append(Ta)
 
             # Calculate magnetic torques
             Tm = self.calc_magnetic_torque(lat, np.linalg.norm(r), r_planet)
@@ -247,7 +222,7 @@ class acsSizer():
             #print(Ts)
             TS.append(Ts)
             # Sum all disturance torque
-            T_total = Ts + Ta + Tm + Tg # [Nm]
+            T_total = Ts + Tm + Tg # [Nm]
             T.append(T_total)
 
             ii = ii + 1 # increment counter
@@ -265,45 +240,52 @@ class acsSizer():
 
         # Size ACS thrusters for secular momentum dumping
         orb_sat = 1 # [orbits/saturation]
-        day_sat = (orb_sat * t) / 86400 # [days/saturation]
+        day_sat = (orb_sat * t) / 86400 # [days/saturation] {THIS IS WHERE YOU NEED TO EDIT THE SATURATION}
         thrust, t_mass = self.prop_system_spec(ang_mom_sec, day_sat)
 
         # Generate polar plot
         fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
         ax.plot(np.transpose(sim_range), T)
         ax.plot(np.transpose(sim_range), TS)
-        ax.plot(np.transpose(sim_range), TA)
         ax.plot(np.transpose(sim_range), TM)
         ax.plot(np.transpose(sim_range), TG)
         ax.grid(True)
-        ax.legend(['total', 'solar', 'aero', 'magnetic', 'gravity'])
+        ax.legend(['total', 'solar', 'magnetic', 'gravity'])
         ax.set_title("Disturbance Torques", va='bottom')
         plt.show()
 
         wheel_cap = (abs(ang_mom_cyc))
-
+        
         return ang_mom_cyc, ang_mom_sec, t_mass, thrust, wheel_cap
 
 
 if __name__ == "__main__":
     # Run test case
-    veh_dim = np.array([1.7, 1, 1.7]) # length width depth
-    veh_CG  = np.array([0.2, 0, 0])
-    veh_mass = 200
-    veh_life = 4
-    Ixx = veh_mass * (veh_dim[0]**2 + veh_dim[1]**2) / 12
-    Iyy = veh_mass * (veh_dim[0]**2 + veh_dim[2]**2) / 12
-    Izz = veh_mass * (veh_dim[1]**2 + veh_dim[2]**2) / 12
+    veh_dim = np.array([65, 65, 1]) # length width depth
+    veh_CG  = np.array([0, 0, 0])  # [m] center of gravity offset from geometric center
+    veh_mass = 60 # [kg] (minus ACS system)
+    veh_life = 7 # [years] Vehicle lifespan
+
+    mu = 6.836529e15
+    R = 27e6
+    boom_mass = 6
+    boom_length = 32.5
+    additional_boom_end_mass = 0.234 * 2
+
+    # mass moment of inertia
+    Izz = (4 * ((boom_mass * boom_length ** 2 / 3) + (additional_boom_end_mass * boom_length ** 2)))
+    Iyy = Izz /2
+    Ixx = Izz / 2
     veh_I = np.diag([Ixx, Iyy, Izz])
-    #print(veh_I)
+    print(f"I: {veh_I}")
     veh = sc_params(veh_dim, veh_CG, veh_I, veh_mass, 0.63, 4)
 
     # Orbit params
-    OE_a = 7078000 # [m] semi major axis
+    OE_a = 2e8+2.5e7 # [m] semi major axis
     OE_e = 0.0 # eccentricity
-    OE_i = 45 * math.pi/180
-    OE_Om = 0
-    OE_Omega = 0
+    OE_i = 45 * math.pi/180 # [rad] inclination
+    OE_Om = 0 # [rad] argument of periapsis
+    OE_Omega = 0 # [rad] longitude of ascending node
     orbit = orbit_params(OE_a, OE_e, OE_i, OE_Om, OE_Omega)
 
     # Setup acsSizer
