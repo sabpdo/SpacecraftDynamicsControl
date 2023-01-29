@@ -121,7 +121,7 @@ class acsSizer():
         rv2 = r * math.sin(nu)
         rv = np.array([rv1, rv2, 0])
         vv = math.sqrt(self.mu/p) * np.array([-math.sin(nu), e + math.cos(nu), 0])
-
+        print("hello")
         # Rotate
         c0 = math.cos(Om)
         s0 = math.sin(Om)
